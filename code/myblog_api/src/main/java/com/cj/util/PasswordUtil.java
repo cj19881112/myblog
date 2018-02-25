@@ -2,7 +2,7 @@ package com.cj.util;
 
 import org.springframework.util.DigestUtils;
 
-public class PasswordUtil {
+public abstract class PasswordUtil {
 
 	public static String encrypt(String password, String captcha) {
 		if (null == password || null == captcha) {

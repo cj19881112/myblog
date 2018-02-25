@@ -8,7 +8,7 @@ import com.cj.conf.MyConfiguration;
 import com.cj.util.excep.CaptchaNotGenerateException;
 import com.google.code.kaptcha.Constants;
 
-public class CaptchaUtil {
+public abstract class CaptchaUtil {
 	public static final String FIX = "fix";
 
 	public static final String RANDOM = "random";
