@@ -23,7 +23,10 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cj.RestHelper;
+import com.cj.conf.MyConfiguration;
 import com.cj.util.ApiRet;
+import com.cj.util.CaptchaUtil;
+import com.cj.util.PasswordUtil;
 import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
@@ -32,6 +35,23 @@ public class SysConfigControllerIT {
 
 	@Autowired
 	private TestRestTemplate rest;
+
+	/**
+	 * 测试登录
+	 */
+	@Test
+	public void testLogin_returnSuccess() {
+		CaptchaUtil.setCaptchaMode(CaptchaUtil.FIX);
+
+		String password = PasswordUtil.encrypt(MyConfiguration.PASSWORD, MyConfiguration.CAPTCHA);
+
+		Map<String, String> params = new HashMap<>();
+		params.put("password", password);
+		ResponseEntity<ApiRet<Void>> ret = new RestHelper(rest).postForEntity("/api/sys/login", params,
+				new ParameterizedTypeReference<ApiRet<Void>>() {
+				});
+		assertThat(ret.getBody().code).isEqualTo(ApiRet.SUCC);
+	}
 
 	/**
 	 * 获取所有配置文件

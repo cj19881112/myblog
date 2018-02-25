@@ -13,6 +13,10 @@ import com.google.code.kaptcha.servlet.KaptchaServlet;
 @Configuration
 @MapperScan("com.cj.*.dao")
 public class MyConfiguration {
+	public static final String PASSWORD = "hexijiehaha";
+
+	public static final String CAPTCHA = "1234";
+
 	@Value("${kaptcha.border:no}")
 	private String border;
 

@@ -20,7 +20,32 @@ public class ApiRet<T> {
 		return new ApiRet<T>(SUCC, "", data);
 	}
 
-	public static ApiRet<Void> err(String code, String msg) {
-		return new ApiRet<Void>(code, msg, null);
+	public static ApiRet<Void> err(ErrCode code) {
+		return new ApiRet<Void>(code.getCode(), code.getMsg(), null);
+	}
+
+	public static ApiRet<Void> ok() {
+		return ok(null);
+	}
+
+	public enum ErrCode {
+		ERR_PASSWORD("0001", "错误的密码或者验证码"), 
+		CAPTCHA_NOT_GENERATE("0002", "验证码未生成");
+
+		private String code;
+		private String msg;
+
+		ErrCode(String code, String msg) {
+			this.code = code;
+			this.msg = msg;
+		}
+
+		public String getCode() {
+			return code;
+		}
+
+		public String getMsg() {
+			return msg;
+		}
 	}
 }

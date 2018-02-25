@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.google.gson.Gson;
 
@@ -30,5 +32,21 @@ public class RestHelper {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<String> entity = new HttpEntity<>(new Gson().toJson(params), headers);
 		return rest.exchange(url, HttpMethod.GET, entity, typeDef);
+	}
+
+	public <T> ResponseEntity<T> postForEntity(String url, ParameterizedTypeReference<T> typeDef) {
+		return postForEntity(url, new HashMap<>(), typeDef);
+	}
+
+	public <T> ResponseEntity<T> postForEntity(String url, Map<String, String> params,
+			ParameterizedTypeReference<T> typeDef) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+		MultiValueMap<String, String> formParams = new LinkedMultiValueMap<>();
+		for (String key : params.keySet()) {
+			formParams.add(key, params.get(key));
+		}
+		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formParams, headers);
+		return rest.exchange(url, HttpMethod.POST, entity, typeDef);
 	}
 }
