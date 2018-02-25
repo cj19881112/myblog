@@ -5,8 +5,6 @@ public class ApiRet<T> {
 	public String msg;
 	public T data;
 
-	public static final String SUCC = "0000";
-
 	public ApiRet() {
 	}
 
@@ -17,7 +15,7 @@ public class ApiRet<T> {
 	}
 
 	public static <T> ApiRet<T> ok(T data) {
-		return new ApiRet<T>(SUCC, "", data);
+		return new ApiRet<T>(ErrCode.SUCC.getCode(), ErrCode.SUCC.getMsg(), data);
 	}
 
 	public static ApiRet<Void> err(ErrCode code) {
@@ -29,8 +27,7 @@ public class ApiRet<T> {
 	}
 
 	public enum ErrCode {
-		ERR_PASSWORD("0001", "错误的密码或者验证码"), 
-		CAPTCHA_NOT_GENERATE("0002", "验证码未生成");
+		SUCC("0000", "成功"), ERR_PASSWORD("0001", "错误的密码或者验证码"), CAPTCHA_NOT_GENERATE("0002", "验证码未生成");
 
 		private String code;
 		private String msg;

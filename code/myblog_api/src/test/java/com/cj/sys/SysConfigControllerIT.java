@@ -50,7 +50,7 @@ public class SysConfigControllerIT {
 		ResponseEntity<ApiRet<Void>> ret = new RestHelper(rest).postForEntity("/api/sys/login", params,
 				new ParameterizedTypeReference<ApiRet<Void>>() {
 				});
-		assertThat(ret.getBody().code).isEqualTo(ApiRet.SUCC);
+		assertThat(ret.getBody().code).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class SysConfigControllerIT {
 		ResponseEntity<ApiRet<Map<String, String>>> ret = new RestHelper(rest).getForEntity("/api/sys/get_sys_conf",
 				new ParameterizedTypeReference<ApiRet<Map<String, String>>>() {
 				});
-		assertThat(ret.getBody().code).isEqualTo(ApiRet.SUCC);
+		assertThat(ret.getBody().code).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
 		assertThat(ret.getBody().data.get("hello")).isEqualTo("world");
 	}
 
