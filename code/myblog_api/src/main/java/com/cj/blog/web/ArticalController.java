@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.cj.blog.model.Artical;
 import com.cj.blog.service.ArticalService;
 import com.cj.util.ApiRet;
+import com.cj.util.ArticalNotFoundException;
 import com.cj.util.ApiRet.ErrCode;
 
 @Controller
@@ -36,8 +37,27 @@ public class ArticalController {
 		return ApiRet.ok(totalRows, articals);
 	}
 
+	@RequestMapping("/get_artical_detail")
+	public @ResponseBody ApiRet<Artical> getArticalDetail(Integer artId) throws ArticalNotFoundException {
+		if (null == artId) {
+			throw new IllegalArgumentException();
+		}
+
+		Artical artical = articalService.getArticalDetail(artId);
+		if (null == artical) {
+			throw new ArticalNotFoundException();
+		}
+
+		return ApiRet.ok(artical);
+	}
+
 	@ExceptionHandler(IllegalArgumentException.class)
 	public @ResponseBody ApiRet<Void> illegalArgumentExceptionHandler() {
 		return ApiRet.err(ErrCode.ILLEGAL_ARGUMENT);
+	}
+
+	@ExceptionHandler(ArticalNotFoundException.class)
+	public @ResponseBody ApiRet<Void> articalNotFoundException() {
+		return ApiRet.err(ErrCode.NOT_FOUND);
 	}
 }

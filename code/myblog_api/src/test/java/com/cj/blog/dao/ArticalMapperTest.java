@@ -2,6 +2,8 @@ package com.cj.blog.dao;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.junit.Test;
@@ -17,13 +19,21 @@ import com.cj.blog.model.Artical;
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class ArticalMapperTest {
 
+	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 	@Autowired
 	private ArticalMapper mapper;
 
 	@Test
-	public void testGetArtical_returnAll() {
+	public void testGetArtical_returnAll() throws ParseException {
 		List<Artical> articals = mapper.getArticals(0, -1, null, null);
 		assertThat(articals.size()).isEqualTo(3);
+		assertThat(articals.get(0)).isEqualToComparingFieldByField(new Artical(4, "world", "/abc", "hello",
+				"hello world", 1, "nice,job", sdf.parse("2018-01-01 00:00:02"), "0"));
+		assertThat(articals.get(1)).isEqualToComparingFieldByField(new Artical(3, "world", "/abc", "hello",
+				"hello world", 1, "hi", sdf.parse("2018-01-01 00:00:01"), "0"));
+		assertThat(articals.get(2)).isEqualToComparingFieldByField(new Artical(2, "hello", "/abc", "hello",
+				"hello world", 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
 	}
 
 	@Test
@@ -49,7 +59,7 @@ public class ArticalMapperTest {
 		List<Artical> articals = mapper.getArticals(0, 2, "%h%", "%wor%");
 		assertThat(articals.size()).isEqualTo(1);
 	}
-	
+
 	@Test
 	public void testCountArtical_returnAll() {
 		int total = mapper.countArtical(null, null);
@@ -72,5 +82,19 @@ public class ArticalMapperTest {
 	public void testCountArtical_likeTagAndKeyword() {
 		int total = mapper.countArtical("%h%", "%wor%");
 		assertThat(total).isEqualTo(1);
+	}
+
+	@Test
+	public void testGetArticalDetail_returnDetail() throws ParseException {
+		Artical expectedArtical = new Artical(2, "hello", "/abc", "hello", "hello world", 1, "hi",
+				sdf.parse("2018-01-01 00:00:00"), "0");
+		Artical artical = mapper.getArticalDetail(2);
+		assertThat(artical).isEqualToComparingFieldByField(expectedArtical);
+	}
+
+	@Test
+	public void testGetArticalDetail_returnNull() {
+		Artical artical = mapper.getArticalDetail(1000);
+		assertThat(artical).isNull();
 	}
 }

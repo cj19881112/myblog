@@ -1,7 +1,10 @@
 package com.cj.blog.web;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,6 +16,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -45,7 +49,7 @@ public class ArticalControllerTest {
 		when(service.countArtical(any(), any())).thenReturn(articals.size());
 
 		mvc.perform(get("/api/artical/get_articals").param("page", "0").param("cnt", "-1")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.total", is(articals.size()))).andExpect(jsonPath("$.code", is("0000")))
+				.andExpect(jsonPath("$.total", is(articals.size()))).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
 				.andExpect(jsonPath("$.data.length()", is(articals.size())))
 				.andExpect(jsonPath("$.data[0].artTitle", is("world")));
 		// TODO more matcher
@@ -78,8 +82,41 @@ public class ArticalControllerTest {
 		when(service.countArtical(any(), any())).thenReturn(0);
 
 		mvc.perform(get("/api/artical/get_articals").param("page", "0").param("cnt", "-1")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.total", is(0))).andExpect(jsonPath("$.code", is("0000")))
+				.andExpect(jsonPath("$.total", is(0))).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
 				.andExpect(jsonPath("$.data.length()", is(0)));
 	}
 
+	@Test
+	public void testGetArticalDetail_returnDetail() throws Exception {
+		Artical artical = new Artical(1, "artTitle", "artImgUrl", "artBrief", "artContent", 11, "artTags", null, "0");
+		when(service.getArticalDetail(anyInt())).thenReturn(artical);
+
+		mvc.perform(get("/api/artical/get_artical_detail").param("artId", "1")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
+				.andExpect(jsonPath("$.data.artId", is(1))).andExpect(jsonPath("$.data.artTitle", is("artTitle")))
+				.andExpect(jsonPath("$.data.artImgUrl", is("artImgUrl")))
+				.andExpect(jsonPath("$.data.artBrief", is("artBrief")))
+				.andExpect(jsonPath("$.data.artContent", is("artContent")))
+				.andExpect(jsonPath("$.data.artReadCnt", is(11))).andExpect(jsonPath("$.data.artTags", is("artTags")))
+				// .andExpect(jsonPath("$.data.artCreatedAt").doesNotExist())
+				.andExpect(jsonPath("$.data.artIsDel", is("0")));
+
+		ArgumentCaptor<Integer> artIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(service).getArticalDetail(artIdCaptor.capture());
+		assertThat(artIdCaptor.getValue()).isEqualTo(1);
+	}
+
+	@Test
+	public void testGetArticalDetail_throwIllegaArgument() throws Exception {
+		mvc.perform(get("/api/artical/get_artical_detail")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ILLEGAL_ARGUMENT.getCode())));
+	}
+
+	@Test
+	public void testGetArticalDetail_throwNotFound() throws Exception {
+		when(service.getArticalDetail(anyInt())).thenReturn(null);
+
+		mvc.perform(get("/api/artical/get_artical_detail").param("artId", "1")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.NOT_FOUND.getCode())));
+	}
 }

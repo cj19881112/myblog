@@ -13,4 +13,6 @@ public interface ArticalMapper {
 	List<Artical> getArticals(@Param("offset") int offset, @Param("limit") int limit, @Param("tag") String tag,
 			@Param("keyword") String keyword);
 
+	Artical getArticalDetail(@Param("artId") Integer artId);
+
 }

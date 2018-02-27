@@ -10,4 +10,6 @@ public interface ArticalService {
 
 	public int countArtical(String tag, String keyword);
 
+	public Artical getArticalDetail(int artId);
+
 }

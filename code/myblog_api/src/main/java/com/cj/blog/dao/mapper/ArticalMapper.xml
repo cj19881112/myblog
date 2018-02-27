@@ -13,6 +13,7 @@
 			and art_title_ like #{keyword}
 		</if>
 	</select>
+
 	<select id="getArticals" resultType="com.cj.blog.model.Artical">
 		<![CDATA[
 			select * from t_artical where art_is_del_ = '0'
@@ -23,8 +24,15 @@
 		<if test="keyword != null and keyword != ''">
 			and art_title_ like #{keyword}
 		</if>
+		order by art_created_at_ desc
 		<if test="limit != -1">
 			limit #{offset}, #{limit}
 		</if>
+	</select>
+
+	<select id="getArticalDetail" resultType="com.cj.blog.model.Artical">
+		<![CDATA[
+			select * from t_artical where art_is_del_ = '0' and art_id_ = #{artId}
+		]]>
 	</select>
 </mapper>

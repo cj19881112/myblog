@@ -130,13 +130,13 @@ public class ArticalServiceImplTest {
 
 	private void testCountArtical(TestCountArticalInputOut in, TestCountArticalInputOut expectedOut) {
 		when(mockMapper.countArtical(any(), any())).thenReturn(in.total);
-		
+
 		int total = service.countArtical(in.tag, in.keyword);
 
 		ArgumentCaptor<String> tagCaptor = ArgumentCaptor.forClass(String.class);
 		ArgumentCaptor<String> keyworkCaptor = ArgumentCaptor.forClass(String.class);
 		verify(mockMapper).countArtical(tagCaptor.capture(), keyworkCaptor.capture());
-		
+
 		assertThat(tagCaptor.getValue()).isEqualTo(expectedOut.tag);
 		assertThat(keyworkCaptor.getValue()).isEqualTo(expectedOut.keyword);
 		assertThat(total).isEqualTo(expectedOut.total);
@@ -150,6 +150,36 @@ public class ArticalServiceImplTest {
 	@Test
 	public void testCountArtical_withCond() {
 		testCountArtical(new TestCountArticalInputOut("ic", "ab", 1), new TestCountArticalInputOut("%ic%", "%ab%", 1));
+	}
+
+	@Test
+	public void testGetArticalDetail_returnDetail() {
+		int artId = 0;
+		Artical mockArtical = new Artical(1, "artTitle", "artImgUrl", "artBrief", "artContent", 11, "artTags", null,
+				"0");
+		when(service.getArticalDetail(anyInt())).thenReturn(mockArtical);
+
+		Artical artical = service.getArticalDetail(artId);
+
+		ArgumentCaptor<Integer> artIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(mockMapper).getArticalDetail(artIdCaptor.capture());
+		assertThat(artIdCaptor.getValue()).isEqualTo(artId);
+
+		assertThat(artical).isEqualToComparingFieldByField(mockArtical);
+	}
+
+	@Test
+	public void testGetArticalDetail_returnEmpty() {
+		int artId = 0;
+		when(service.getArticalDetail(anyInt())).thenReturn(null);
+
+		Artical artical = service.getArticalDetail(artId);
+
+		ArgumentCaptor<Integer> artIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(mockMapper).getArticalDetail(artIdCaptor.capture());
+		assertThat(artIdCaptor.getValue()).isEqualTo(artId);
+
+		assertThat(artical).isNull();
 	}
 
 }

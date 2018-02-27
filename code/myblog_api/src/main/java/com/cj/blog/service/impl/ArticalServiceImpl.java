@@ -29,4 +29,9 @@ public class ArticalServiceImpl implements ArticalService {
 	public int countArtical(String tag, String keyword) {
 		return mapper.countArtical(SqlUtil.like(tag), SqlUtil.like(keyword));
 	}
+
+	@Override
+	public Artical getArticalDetail(int artId) {
+		return mapper.getArticalDetail(artId);
+	}
 }

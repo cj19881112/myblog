@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.cj.conf.MyConfiguration;
 import com.cj.sys.service.SysConfigService;
+import com.cj.util.ApiRet;
 import com.cj.util.CaptchaUtil;
 import com.cj.util.PasswordUtil;
 import com.google.code.kaptcha.Constants;
@@ -43,19 +44,20 @@ public class SysConfigControllerTest {
 		mockData.put("hello", "world");
 		when(mockService.getSysConfig()).thenReturn(mockData);
 		this.mvc.perform(get("/api/sys/get_sys_conf")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.code", is("0000"))).andExpect(jsonPath("$.data.hello", is("world")));
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
+				.andExpect(jsonPath("$.data.hello", is("world")));
 	}
 
 	@Test
 	public void testLogin_success() throws Exception {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
-		
+
 		String captcha = "1111", password = MyConfiguration.PASSWORD;
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, captcha);
 
 		this.mvc.perform(
 				post("/api/sys/login").param("password", PasswordUtil.encrypt(password, captcha)).session(session))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is("0000")));
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())));
 
 		assertThat(session.getAttribute(MyConfiguration.SESSION_KEY)).isNotNull();
 	}
@@ -63,31 +65,32 @@ public class SysConfigControllerTest {
 	@Test
 	public void testLogin_errorCapcha() throws Exception {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
-		
+
 		String captcha = "1111", password = MyConfiguration.PASSWORD;
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, "1112");
 
 		this.mvc.perform(
 				post("/api/sys/login").param("password", PasswordUtil.encrypt(password, captcha)).session(session))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is("0001")));
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ERR_PASSWORD.getCode())));
 	}
 
 	@Test
 	public void testLogin_errorPassword() throws Exception {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
-		
+
 		String captcha = "1111";
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, captcha);
 		this.mvc.perform(post("/api/sys/login").param("password", PasswordUtil.encrypt("-1", captcha)).session(session))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is("0001")));
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ERR_PASSWORD.getCode())));
 	}
 
 	@Test
 	public void testLogin_chaptchaNotGenerate() throws Exception {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
-		
+
 		session.removeAttribute(Constants.KAPTCHA_SESSION_KEY);
 		this.mvc.perform(post("/api/sys/login").param("password", PasswordUtil.encrypt("-1", "1234")))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is("0002")));
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.CAPTCHA_NOT_GENERATE.getCode())));
 	}
 }
