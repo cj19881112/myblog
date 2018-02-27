@@ -1,0 +1,30 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE mapper PUBLIC '-//mybatis.org//DTD Mapper 3.0//EN'
+  'http://mybatis.org/dtd/mybatis-3-mapper.dtd'>
+<mapper namespace='com.cj.blog.dao.ArticalMapper'>
+	<select id="countArtical" resultType="Integer">
+		<![CDATA[
+			select count(0) from t_artical where art_is_del_ = '0'
+		]]>
+		<if test="tag != null and tag != ''">
+			and art_tags_ like #{tag}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			and art_title_ like #{keyword}
+		</if>
+	</select>
+	<select id="getArticals" resultType="com.cj.blog.model.Artical">
+		<![CDATA[
+			select * from t_artical where art_is_del_ = '0'
+		]]>
+		<if test="tag != null and tag != ''">
+			and art_tags_ like #{tag}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			and art_title_ like #{keyword}
+		</if>
+		<if test="limit != -1">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+</mapper>

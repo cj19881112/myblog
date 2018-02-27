@@ -34,6 +34,7 @@ public class SysConfigController {
 		String captcha = CaptchaUtil.getCaptcha(session);
 		String realPassword = PasswordUtil.encrypt(MyConfiguration.PASSWORD, captcha);
 		if (realPassword.equals(password)) {
+			session.setAttribute(MyConfiguration.SESSION_KEY, MyConfiguration.SESSION_KEY);
 			return ApiRet.ok();
 		} else {
 			return ApiRet.err(ApiRet.ErrCode.ERR_PASSWORD);

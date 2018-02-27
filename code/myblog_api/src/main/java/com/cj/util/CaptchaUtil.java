@@ -38,7 +38,11 @@ public abstract class CaptchaUtil {
 		return captcha;
 	}
 
-	public static void setCaptchaMode(String captchaMode) {
-		CaptchaUtil.captchaMode = captchaMode;
+	public static void setCaptchaMode(String captchaMode) throws IllegalCaptchaModeException {
+		if (captchaMode.equals(FIX) || captchaMode.equals(RANDOM)) {
+			CaptchaUtil.captchaMode = captchaMode;
+		} else {
+			throw new IllegalCaptchaModeException();
+		}
 	}
 }

@@ -1,5 +1,6 @@
 package com.cj.conf;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 
 import org.mybatis.spring.annotation.MapperScan;
@@ -8,6 +9,8 @@ import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.cj.util.CaptchaUtil;
+import com.cj.util.IllegalCaptchaModeException;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 
 @Configuration
@@ -16,6 +19,11 @@ public class MyConfiguration {
 	public static final String PASSWORD = "hexijiehaha";
 
 	public static final String CAPTCHA = "1234";
+
+	public static final String SESSION_KEY = "myblog_session_key";
+
+	@Value("${kaptcha.mode:random}")
+	private String mode;
 
 	@Value("${kaptcha.border:no}")
 	private String border;
@@ -59,4 +67,8 @@ public class MyConfiguration {
 		return servlet;
 	}
 
+	@PostConstruct
+	public void initCaptchaMode() throws IllegalCaptchaModeException {
+		CaptchaUtil.setCaptchaMode(mode);
+	}
 }

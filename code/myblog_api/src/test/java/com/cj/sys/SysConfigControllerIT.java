@@ -26,6 +26,7 @@ import com.cj.RestHelper;
 import com.cj.conf.MyConfiguration;
 import com.cj.util.ApiRet;
 import com.cj.util.CaptchaUtil;
+import com.cj.util.IllegalCaptchaModeException;
 import com.cj.util.PasswordUtil;
 import com.google.gson.Gson;
 
@@ -38,9 +39,10 @@ public class SysConfigControllerIT {
 
 	/**
 	 * 测试登录
+	 * @throws IllegalCaptchaModeException 
 	 */
 	@Test
-	public void testLogin_returnSuccess() {
+	public void testLogin_returnSuccess() throws IllegalCaptchaModeException {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.FIX);
 
 		String password = PasswordUtil.encrypt(MyConfiguration.PASSWORD, MyConfiguration.CAPTCHA);
@@ -50,7 +52,7 @@ public class SysConfigControllerIT {
 		ResponseEntity<ApiRet<Void>> ret = new RestHelper(rest).postForEntity("/api/sys/login", params,
 				new ParameterizedTypeReference<ApiRet<Void>>() {
 				});
-		assertThat(ret.getBody().code).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
+		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
 	}
 
 	/**
@@ -63,8 +65,8 @@ public class SysConfigControllerIT {
 		ResponseEntity<ApiRet<Map<String, String>>> ret = new RestHelper(rest).getForEntity("/api/sys/get_sys_conf",
 				new ParameterizedTypeReference<ApiRet<Map<String, String>>>() {
 				});
-		assertThat(ret.getBody().code).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
-		assertThat(ret.getBody().data.get("hello")).isEqualTo("world");
+		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
+		assertThat(ret.getBody().getData().get("hello")).isEqualTo("world");
 	}
 
 	/**

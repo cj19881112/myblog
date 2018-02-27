@@ -30,12 +30,12 @@ public class TagControllerTestIT {
 		ResponseEntity<ApiRet<List<Tag>>> tags = new RestHelper(rest).getForEntity("/api/tag/get_tags",
 				new ParameterizedTypeReference<ApiRet<List<Tag>>>() {
 				});
-		assertThat(tags.getBody().code).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
-		assertThat(tags.getBody().data.size()).isGreaterThan(0);
-		assertThat(tags.getBody().data.get(0).getTagName()).isEqualTo("hi");
-		assertThat(tags.getBody().data.get(0).getTagSort()).isEqualTo(0);
-		assertThat(tags.getBody().data.get(1).getTagName()).isEqualTo("hello");
-		assertThat(tags.getBody().data.get(1).getTagSort()).isEqualTo(1);
+		assertThat(tags.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
+		assertThat(tags.getBody().getData().size()).isGreaterThan(0);
+		assertThat(tags.getBody().getData().get(0).getTagName()).isEqualTo("hi");
+		assertThat(tags.getBody().getData().get(0).getTagSort()).isEqualTo(0);
+		assertThat(tags.getBody().getData().get(1).getTagName()).isEqualTo("hello");
+		assertThat(tags.getBody().getData().get(1).getTagSort()).isEqualTo(1);
 	}
 
 }
