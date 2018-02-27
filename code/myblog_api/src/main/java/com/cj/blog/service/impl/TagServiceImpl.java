@@ -16,6 +16,9 @@ public class TagServiceImpl implements TagService {
 	@Autowired
 	private TagMapper tagMapper;
 
+	/**
+	 * 获取所有tag，如果不存在返回空的集合
+	 */
 	@Override
 	public List<Tag> getTags() {
 		List<Tag> tags = tagMapper.getTags();

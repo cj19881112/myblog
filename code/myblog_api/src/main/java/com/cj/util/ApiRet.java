@@ -1,9 +1,30 @@
 package com.cj.util;
 
+/**
+ * 通用返回辅助类
+ *
+ * @param <T>
+ *            返回的数据的类型
+ */
 public class ApiRet<T> {
+	/**
+	 * 返回码
+	 */
 	private String code;
+
+	/**
+	 * 返回信息
+	 */
 	private String msg;
+
+	/**
+	 * 如果是分页请求，这个字段表示总条目，否则该字段无意义
+	 */
 	private int total;
+
+	/**
+	 * 返回的数据
+	 */
 	private T data;
 
 	public ApiRet() {
@@ -54,18 +75,46 @@ public class ApiRet<T> {
 		this.data = data;
 	}
 
+	/**
+	 * 返回成功
+	 * 
+	 * @param data
+	 *            返回的数据
+	 * @return
+	 */
 	public static <T> ApiRet<T> ok(T data) {
 		return new ApiRet<T>(ErrCode.SUCC.getCode(), ErrCode.SUCC.getMsg(), data);
 	}
 
+	/**
+	 * 返回成功-分页模式
+	 * 
+	 * @param total
+	 *            总条数
+	 * @param data
+	 *            返回的数据
+	 * @return
+	 */
 	public static <T> ApiRet<T> ok(int total, T data) {
 		return new ApiRet<T>(ErrCode.SUCC.getCode(), ErrCode.SUCC.getMsg(), total, data);
 	}
 
+	/**
+	 * 返回失败
+	 * 
+	 * @param code
+	 *            错误码
+	 * @return
+	 */
 	public static ApiRet<Void> err(ErrCode code) {
 		return new ApiRet<Void>(code.getCode(), code.getMsg(), null);
 	}
 
+	/**
+	 * 返回成功 无数据
+	 * 
+	 * @return
+	 */
 	public static ApiRet<Void> ok() {
 		return ok(null);
 	}

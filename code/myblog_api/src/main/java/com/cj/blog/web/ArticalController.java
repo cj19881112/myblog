@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -22,6 +23,19 @@ public class ArticalController {
 	@Autowired
 	private ArticalService articalService;
 
+	/**
+	 * 获取文章列表
+	 * 
+	 * @param page
+	 *            页码
+	 * @param cnt
+	 *            每页的条目数
+	 * @param tag
+	 *            需要所搜的tag
+	 * @param keyword
+	 *            需要搜索的关键字
+	 * @return 如果找到文章返回文章列表，没找到返回空的集合
+	 */
 	@RequestMapping("/get_articals")
 	public @ResponseBody ApiRet<List<Artical>> getArticals(Integer page, Integer cnt, String tag, String keyword) {
 		if (page == null || cnt == null || page < 0 || (cnt < 0 && cnt != -1)) {
@@ -37,6 +51,15 @@ public class ArticalController {
 		return ApiRet.ok(totalRows, articals);
 	}
 
+	/**
+	 * 获取文章详情
+	 * 
+	 * @param artId
+	 *            文章的ID
+	 * @return 文章详情
+	 * @throws ArticalNotFoundException
+	 *             未找到文章
+	 */
 	@RequestMapping("/get_artical_detail")
 	public @ResponseBody ApiRet<Artical> getArticalDetail(Integer artId) throws ArticalNotFoundException {
 		if (null == artId) {
@@ -51,11 +74,32 @@ public class ArticalController {
 		return ApiRet.ok(artical);
 	}
 
+	/**
+	 * 创建文章
+	 * 
+	 * @param artical
+	 *            文章内容
+	 * @return 生成的文章的ID
+	 */
+	@RequestMapping("/create_artical")
+	public @ResponseBody ApiRet<Integer> createArtical(@RequestBody Artical artical) {
+		return null;
+	}
+
+	/**
+	 * 处理参数错误异常，返回对应的错误码
+	 * 
+	 * @return 对应的错误码
+	 */
 	@ExceptionHandler(IllegalArgumentException.class)
 	public @ResponseBody ApiRet<Void> illegalArgumentExceptionHandler() {
 		return ApiRet.err(ErrCode.ILLEGAL_ARGUMENT);
 	}
 
+	/**
+	 * 处理未找到文章异常
+	 * @return 对应的错误码
+	 */
 	@ExceptionHandler(ArticalNotFoundException.class)
 	public @ResponseBody ApiRet<Void> articalNotFoundException() {
 		return ApiRet.err(ErrCode.NOT_FOUND);

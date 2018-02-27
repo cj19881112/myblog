@@ -17,6 +17,9 @@ public class SysConfigServiceImpl implements SysConfigService {
 	@Autowired
 	private SysConfigMapper mapper;
 
+	/**
+	 * 获取系统配置，如果没有配置返回空的集合
+	 */
 	@Override
 	public Map<String, String> getSysConfig() {
 		List<Conf> confs = mapper.getSysConfig();

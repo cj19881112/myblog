@@ -19,6 +19,10 @@ public class TagController {
 	@Autowired
 	private TagService tagService;
 
+	/**
+	 * 获取系统的所有tag
+	 * @return 如果存在返回tag列表，不存在返回空的列表
+	 */
 	@RequestMapping("/get_tags")
 	public @ResponseBody ApiRet<List<Tag>> getTags() {
 		List<Tag> tags = tagService.getTags();
