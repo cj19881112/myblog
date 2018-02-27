@@ -7,9 +7,11 @@ import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,12 +22,15 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.cj.blog.model.Artical;
 import com.cj.blog.service.ArticalService;
 import com.cj.util.ApiRet;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ArticalController.class)
@@ -38,6 +43,8 @@ public class ArticalControllerTest {
 	@MockBean
 	private ArticalService service;
 
+	Gson g = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
+
 	@Test
 	public void testGetArticals_returnAll() throws Exception {
 		List<Artical> articals = new LinkedList<>();
@@ -49,7 +56,8 @@ public class ArticalControllerTest {
 		when(service.countArtical(any(), any())).thenReturn(articals.size());
 
 		mvc.perform(get("/api/artical/get_articals").param("page", "0").param("cnt", "-1")).andExpect(status().isOk())
-				.andExpect(jsonPath("$.total", is(articals.size()))).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
+				.andExpect(jsonPath("$.total", is(articals.size())))
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
 				.andExpect(jsonPath("$.data.length()", is(articals.size())))
 				.andExpect(jsonPath("$.data[0].artTitle", is("world")));
 		// TODO more matcher
@@ -118,5 +126,134 @@ public class ArticalControllerTest {
 
 		mvc.perform(get("/api/artical/get_artical_detail").param("artId", "1")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.NOT_FOUND.getCode())));
+	}
+
+	/**
+	 * 创建文章-正常
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_returnId() throws Exception {
+		Artical artical = new Artical(null, "hello", "/abc", null, "hello world", null, "hi", null, null);
+		Integer id = 1;
+		when(service.createArtical(any())).thenReturn(id);
+
+		mvc.perform(
+				post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON).content(g.toJson(artical)))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
+				.andExpect(jsonPath("$.data", is(id)));
+
+		ArgumentCaptor<Artical> articalCaptor = ArgumentCaptor.forClass(Artical.class);
+		verify(service).createArtical(articalCaptor.capture());
+
+		assertThat(articalCaptor.getValue()).isEqualToIgnoringNullFields(artical);
+	}
+
+	/**
+	 * 创建文章 - 错误的参数
+	 * 
+	 * @param artical
+	 *            模拟的数据
+	 * @throws ParseException
+	 * @throws Exception
+	 */
+	private void testCreateArtical_invalidArgument(Artical artical) throws ParseException, Exception {
+
+		Integer id = 1;
+		when(service.createArtical(any())).thenReturn(id);
+
+		mvc.perform(
+				post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON).content(g.toJson(artical)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ILLEGAL_ARGUMENT.getCode())));
+	}
+
+	/**
+	 * 创建文章-缺少title
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorNoTitle() throws Exception {
+		testCreateArtical_invalidArgument(new Artical(null, null, "/abc", "hello", "hello world", 1, "hi",
+				sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-title为空
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_emptyTitle() throws Exception {
+		testCreateArtical_invalidArgument(
+				new Artical(null, "", "/abc", "hello", "hello world", 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-缺少imgUrl
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorNoImgUrl() throws Exception {
+		testCreateArtical_invalidArgument(new Artical(null, "title", null, "hello", "hello world", 1, "hi",
+				sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-imgUrl为空
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorEmptyImgUrl() throws Exception {
+		testCreateArtical_invalidArgument(
+				new Artical(null, "title", "", "hello", "hello world", 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-缺少tag
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorNoTag() throws Exception {
+		testCreateArtical_invalidArgument(new Artical(null, "title", "/url", null, "hello world", 1, null,
+				sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-tag为空
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorEmptyTag() throws Exception {
+		testCreateArtical_invalidArgument(
+				new Artical(null, "title", "/url", "", "hello world", 1, "", sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-缺少content
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorNoContent() throws Exception {
+		testCreateArtical_invalidArgument(
+				new Artical(null, "title", "/url", null, null, 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 创建文章-content为空
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_errorEmptyContent() throws Exception {
+		testCreateArtical_invalidArgument(
+				new Artical(null, "title", "/url", "", "", 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
 	}
 }

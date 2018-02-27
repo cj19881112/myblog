@@ -41,4 +41,22 @@ public interface ArticalService {
 	 */
 	public Artical getArticalDetail(int artId);
 
+	/**
+	 * 创建文章
+	 * 
+	 * @param artical
+	 *            文章对象
+	 * @return 创建成功返回文章ID
+	 */
+	public Integer createArtical(Artical artical);
+
+	/**
+	 * 获取简短的正文内容F
+	 * 
+	 * @param content
+	 * @param briefLength
+	 * @return
+	 */
+	public String getBrief(String content, int briefLength);
+
 }

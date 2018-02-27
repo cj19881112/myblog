@@ -32,6 +32,12 @@ public class MyConfiguration {
 	public static final String SESSION_KEY = "myblog_session_key";
 
 	/**
+	 * 文章的摘要的长度
+	 */
+	@Value("${artical.birefLength:20}")
+	public static int BRIEF_LENGTH = 32;
+
+	/**
 	 * 验证码生成模式: fix-固定 random-随机
 	 */
 	@Value("${kaptcha.mode:random}")

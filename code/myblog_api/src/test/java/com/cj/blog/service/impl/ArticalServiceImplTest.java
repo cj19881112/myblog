@@ -17,10 +17,13 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 import com.cj.blog.dao.ArticalMapper;
 import com.cj.blog.model.Artical;
+import com.cj.conf.MyConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArticalServiceImplTest {
@@ -157,7 +160,7 @@ public class ArticalServiceImplTest {
 		int artId = 0;
 		Artical mockArtical = new Artical(1, "artTitle", "artImgUrl", "artBrief", "artContent", 11, "artTags", null,
 				"0");
-		when(service.getArticalDetail(anyInt())).thenReturn(mockArtical);
+		when(mockMapper.getArticalDetail(anyInt())).thenReturn(mockArtical);
 
 		Artical artical = service.getArticalDetail(artId);
 
@@ -171,7 +174,7 @@ public class ArticalServiceImplTest {
 	@Test
 	public void testGetArticalDetail_returnEmpty() {
 		int artId = 0;
-		when(service.getArticalDetail(anyInt())).thenReturn(null);
+		when(mockMapper.getArticalDetail(anyInt())).thenReturn(null);
 
 		Artical artical = service.getArticalDetail(artId);
 
@@ -182,4 +185,43 @@ public class ArticalServiceImplTest {
 		assertThat(artical).isNull();
 	}
 
+	/**
+	 * 测试创建文章，生成对应的字段
+	 */
+	@Test
+	public void testCreateArtical_returnId() {
+		Integer mockId = 11;
+		String content = "very very long content string very very long content string very very long content string ";
+		Artical artical = new Artical(null, "hello", "/abc", null, content, null, "hi", null, null);
+		when(mockMapper.saveArtical(any())).thenAnswer(new Answer<Integer>() {
+			@Override
+			public Integer answer(InvocationOnMock invocation) throws Throwable {
+				invocation.getArgumentAt(0, Artical.class).setArtId(mockId);
+				return 1;
+			}
+		});
+
+		Integer id = service.createArtical(artical);
+
+		ArgumentCaptor<Artical> articalCaptor = ArgumentCaptor.forClass(Artical.class);
+		verify(mockMapper).saveArtical(articalCaptor.capture());
+		assertThat(id).isEqualTo(mockId);
+		Artical articalExpected = new Artical(null, "hello", "/abc",
+				service.getBrief(content, MyConfiguration.BRIEF_LENGTH), content, 0, "hi", null, "0");
+		assertThat(articalCaptor.getValue()).isEqualToIgnoringNullFields(articalExpected);
+	}
+
+	/**
+	 * 测试根据文章内容获取简短描述
+	 */
+	@Test
+	public void testGetBrief_returnBreif() {
+		assertThat(service.getBrief("hello", 5)).isEqualTo("hello");
+		assertThat(service.getBrief("hello", 2)).isEqualTo("he");
+		assertThat(service.getBrief("hello", 32)).isEqualTo("hello");
+		assertThat(service.getBrief("", 2)).isEqualTo("");
+		assertThat(service.getBrief(null, 2)).isEqualTo("");
+		assertThat(service.getBrief("", -2)).isEqualTo("");
+		assertThat(service.getBrief("", 0)).isEqualTo("");
+	}
 }

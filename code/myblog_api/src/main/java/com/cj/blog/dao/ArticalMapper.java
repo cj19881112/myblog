@@ -44,4 +44,19 @@ public interface ArticalMapper {
 	 */
 	Artical getArticalDetail(@Param("artId") Integer artId);
 
+	/**
+	 * 创建文章
+	 * 
+	 * @param artical
+	 *            文章
+	 * @return
+	 */
+	Integer saveArtical(@Param("a") Artical artical);
+
+	/**
+	 * 删除文章
+	 * @param artId 文章ID
+	 * @return
+	 */
+	int removeArtical(@Param("artId") Integer artId);
 }

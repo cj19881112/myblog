@@ -38,15 +38,22 @@ public class RestHelper {
 		return postForEntity(url, new HashMap<>(), typeDef);
 	}
 
-	public <T> ResponseEntity<T> postForEntity(String url, Map<String, String> params,
+	public <T> ResponseEntity<T> postForEntity(String url, Map<String, Object> params,
 			ParameterizedTypeReference<T> typeDef) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-		MultiValueMap<String, String> formParams = new LinkedMultiValueMap<>();
+		MultiValueMap<String, Object> formParams = new LinkedMultiValueMap<>();
 		for (String key : params.keySet()) {
 			formParams.add(key, params.get(key));
 		}
-		HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(formParams, headers);
+		HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(formParams, headers);
+		return rest.exchange(url, HttpMethod.POST, entity, typeDef);
+	}
+
+	public <T> ResponseEntity<T> postForEntity(String url, String params, ParameterizedTypeReference<T> typeDef) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<String> entity = new HttpEntity<>(params, headers);
 		return rest.exchange(url, HttpMethod.POST, entity, typeDef);
 	}
 }

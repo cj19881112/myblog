@@ -6,12 +6,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cj.sys.dao.SysConfigMapper;
 import com.cj.sys.model.Conf;
 import com.cj.sys.service.SysConfigService;
 
 @Service
+@Transactional
 public class SysConfigServiceImpl implements SysConfigService {
 
 	@Autowired

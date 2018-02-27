@@ -17,8 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cj.RestHelper;
+import com.cj.blog.dao.ArticalMapper;
 import com.cj.blog.model.Artical;
 import com.cj.util.ApiRet;
+import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -28,6 +30,9 @@ public class ArticalControllerTestIT {
 
 	@Autowired
 	private TestRestTemplate rest;
+
+	@Autowired
+	private ArticalMapper mapper;
 
 	@Test
 	public void testGetArtical_returnAll() throws ParseException {
@@ -59,4 +64,20 @@ public class ArticalControllerTestIT {
 		assertThat(artical.getBody().getData()).isNotNull();
 	}
 
+	/**
+	 * 创建文章-集成测试
+	 * 
+	 * @throws ParseException
+	 */
+	@Test
+	public void testCreateArtical_returnId() throws ParseException {
+		Artical artical = new Artical(null, "hello", "/abc", "hello", "hello world", null, "hi", null, null);
+		ResponseEntity<ApiRet<Integer>> ret = new RestHelper(rest).postForEntity("/api/artical/create_artical",
+				new Gson().toJson(artical), new ParameterizedTypeReference<ApiRet<Integer>>() {
+				});
+		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
+		assertThat(ret.getBody().getData()).isGreaterThan(0);
+
+		mapper.removeArtical(ret.getBody().getData());
+	}
 }

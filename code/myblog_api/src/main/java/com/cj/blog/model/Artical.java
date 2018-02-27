@@ -3,12 +3,12 @@ package com.cj.blog.model;
 import java.util.Date;
 
 public class Artical {
-	private int artId;
+	private Integer artId;
 	private String artTitle;
 	private String artImgUrl;
 	private String artBrief;
 	private String artContent;
-	private int artReadCnt;
+	private Integer artReadCnt;
 	private String artTags;
 	private Date artCreatedAt;
 	private String artIsDel;
@@ -16,8 +16,8 @@ public class Artical {
 	public Artical() {
 	}
 
-	public Artical(int artId, String artTitle, String artImgUrl, String artBrief, String artContent, int artReadCnt,
-			String artTags, Date artCreatedAt, String artIsDel) {
+	public Artical(Integer artId, String artTitle, String artImgUrl, String artBrief, String artContent,
+			Integer artReadCnt, String artTags, Date artCreatedAt, String artIsDel) {
 		super();
 		this.artId = artId;
 		this.artTitle = artTitle;
@@ -30,11 +30,11 @@ public class Artical {
 		this.artIsDel = artIsDel;
 	}
 
-	public int getArtId() {
+	public Integer getArtId() {
 		return artId;
 	}
 
-	public void setArtId(int artId) {
+	public void setArtId(Integer artId) {
 		this.artId = artId;
 	}
 
@@ -70,11 +70,11 @@ public class Artical {
 		this.artContent = artContent;
 	}
 
-	public int getArtReadCnt() {
+	public Integer getArtReadCnt() {
 		return artReadCnt;
 	}
 
-	public void setArtReadCnt(int artReadCnt) {
+	public void setArtReadCnt(Integer artReadCnt) {
 		this.artReadCnt = artReadCnt;
 	}
 

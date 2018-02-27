@@ -35,4 +35,23 @@
 			select * from t_artical where art_is_del_ = '0' and art_id_ = #{artId}
 		]]>
 	</select>
+
+	<insert id="saveArtical" parameterType="com.cj.blog.model.Artical">
+		<selectKey resultType="java.lang.Integer" order="AFTER"
+			keyProperty="a.artId">
+			select LAST_INSERT_ID() as artId
+		</selectKey>
+		<![CDATA[
+		insert into t_artical 
+			(`art_id_`, `art_title_`, `art_img_url_`, `art_brief_`, `art_content_`, `art_read_cnt_`, `art_tags_`, `art_created_at_`, `art_is_del_`) 
+		values 
+			(#{a.artId}, #{a.artTitle}, #{a.artImgUrl}, #{a.artBrief}, #{a.artContent}, #{a.artReadCnt}, #{a.artTags}, #{a.artCreatedAt}, #{a.artIsDel});
+		]]>
+	</insert>
+
+	<delete id="removeArtical">
+		<![CDATA[
+		delete from t_artical WHERE t_artical.art_id_ = #{artId}
+		]]>
+	</delete>
 </mapper>

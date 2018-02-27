@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,21 +84,16 @@ public class ArticalController {
 	 */
 	@RequestMapping("/create_artical")
 	public @ResponseBody ApiRet<Integer> createArtical(@RequestBody Artical artical) {
-		return null;
-	}
-
-	/**
-	 * 处理参数错误异常，返回对应的错误码
-	 * 
-	 * @return 对应的错误码
-	 */
-	@ExceptionHandler(IllegalArgumentException.class)
-	public @ResponseBody ApiRet<Void> illegalArgumentExceptionHandler() {
-		return ApiRet.err(ErrCode.ILLEGAL_ARGUMENT);
+		if (StringUtils.isEmpty(artical.getArtTitle()) || StringUtils.isEmpty(artical.getArtImgUrl())
+				|| StringUtils.isEmpty(artical.getArtTags()) || StringUtils.isEmpty(artical.getArtContent())) {
+			throw new IllegalArgumentException();
+		}
+		return ApiRet.ok(articalService.createArtical(artical));
 	}
 
 	/**
 	 * 处理未找到文章异常
+	 * 
 	 * @return 对应的错误码
 	 */
 	@ExceptionHandler(ArticalNotFoundException.class)

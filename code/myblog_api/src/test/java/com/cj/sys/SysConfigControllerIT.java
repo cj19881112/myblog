@@ -39,7 +39,8 @@ public class SysConfigControllerIT {
 
 	/**
 	 * 测试登录
-	 * @throws IllegalCaptchaModeException 
+	 * 
+	 * @throws IllegalCaptchaModeException
 	 */
 	@Test
 	public void testLogin_returnSuccess() throws IllegalCaptchaModeException {
@@ -47,7 +48,7 @@ public class SysConfigControllerIT {
 
 		String password = PasswordUtil.encrypt(MyConfiguration.PASSWORD, MyConfiguration.CAPTCHA);
 
-		Map<String, String> params = new HashMap<>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("password", password);
 		ResponseEntity<ApiRet<Void>> ret = new RestHelper(rest).postForEntity("/api/sys/login", params,
 				new ParameterizedTypeReference<ApiRet<Void>>() {

@@ -12,11 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cj.blog.model.Artical;
+import com.cj.blog.model.EnumBoolean;
+import com.cj.util.DateUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@Transactional
 public class ArticalMapperTest {
 
 	private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -96,5 +100,18 @@ public class ArticalMapperTest {
 	public void testGetArticalDetail_returnNull() {
 		Artical artical = mapper.getArticalDetail(1000);
 		assertThat(artical).isNull();
+	}
+
+	/**
+	 * 测试插入文章
+	 */
+	@Test
+	public void testSaveArtical_returnId() {
+		Artical artical = new Artical(null, "hello", "/abc", "brief", "content", 11, "hi", DateUtil.now(),
+				EnumBoolean.FALSE.getCode());
+		Integer affectedRows = mapper.saveArtical(artical);
+		assertThat(affectedRows).isEqualTo(1);
+		Artical articalInDb = mapper.getArticalDetail(artical.getArtId());
+		assertThat(artical).isEqualToComparingFieldByField(articalInDb);
 	}
 }

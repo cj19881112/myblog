@@ -5,12 +5,14 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.cj.blog.dao.TagMapper;
 import com.cj.blog.model.Tag;
 import com.cj.blog.service.TagService;
 
 @Service
+@Transactional
 public class TagServiceImpl implements TagService {
 
 	@Autowired
