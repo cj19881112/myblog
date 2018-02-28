@@ -11,6 +11,6 @@ services:
 
 before_install:
   - mysql -uroot -e 'CREATE DATABASE myblog_test;'
-  - mysql -uroot < design/schema.sql
+  - mysql -uroot myblog_test < design/schema.sql
 
 script: cd $TEST_DIR && mvn install && mvn test
