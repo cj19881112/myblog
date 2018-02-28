@@ -24,6 +24,8 @@ import org.mockito.stubbing.Answer;
 import com.cj.blog.dao.ArticalMapper;
 import com.cj.blog.model.Artical;
 import com.cj.util.Constants;
+import com.cj.util.DateUtil;
+import com.cj.util.excep.ArticalNotFoundException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArticalServiceImplTest {
@@ -209,6 +211,40 @@ public class ArticalServiceImplTest {
 		Artical articalExpected = new Artical(null, "hello", "/abc", service.getBrief(content, Constants.BRIEF_LENGTH),
 				content, 0, "hi", null, "0");
 		assertThat(articalCaptor.getValue()).isEqualToIgnoringNullFields(articalExpected);
+	}
+
+	/**
+	 * 测试编辑，修改对应字段
+	 * 
+	 * @throws ArticalNotFoundException
+	 */
+	@Test
+	public void testUpdateArtical_success() throws ArticalNotFoundException {
+		String content = "very very nice content string very very long content string very very long content string ";
+		Artical artical = new Artical(4, "hello", "/abc", "asdf", content, 2, "hi", DateUtil.now(), "0");
+		when(mockMapper.updateArtical(any())).thenReturn(1);
+
+		service.updateArtical(artical);
+
+		ArgumentCaptor<Artical> articalCaptor = ArgumentCaptor.forClass(Artical.class);
+		verify(mockMapper).updateArtical(articalCaptor.capture());
+
+		Artical articalExpected = new Artical(4, "hello", "/abc", service.getBrief(content, Constants.BRIEF_LENGTH),
+				content, null, "hi", null, null);
+		assertThat(articalCaptor.getValue()).isEqualToComparingFieldByField(articalExpected);
+	}
+
+	/**
+	 * 测试编辑，修改对应字段
+	 * 
+	 * @throws ArticalNotFoundException
+	 */
+	@Test(expected = ArticalNotFoundException.class)
+	public void testUpdateArtical_notFound() throws ArticalNotFoundException {
+		Artical artical = new Artical(11, "hello", "/abc", null, "", null, "hi", null, null);
+		when(mockMapper.saveArtical(any())).thenReturn(0);
+
+		service.updateArtical(artical);
 	}
 
 	/**

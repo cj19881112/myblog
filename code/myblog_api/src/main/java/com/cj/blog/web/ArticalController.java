@@ -86,11 +86,36 @@ public class ArticalController {
 	@NeedAuth
 	@RequestMapping("/create_artical")
 	public @ResponseBody ApiRet<Integer> createArtical(@RequestBody Artical artical) {
-		if (StringUtils.isEmpty(artical.getArtTitle()) || StringUtils.isEmpty(artical.getArtImgUrl())
+		if (null == artical || StringUtils.isEmpty(artical.getArtTitle()) || StringUtils.isEmpty(artical.getArtImgUrl())
 				|| StringUtils.isEmpty(artical.getArtTags()) || StringUtils.isEmpty(artical.getArtContent())) {
 			throw new IllegalArgumentException();
 		}
 		return ApiRet.ok(articalService.createArtical(artical));
+	}
+
+	/**
+	 * 编辑文章
+	 * 
+	 * @param artical
+	 *            文章内容
+	 * @return Void
+	 * @throws ArticalNotFoundException
+	 */
+	@NeedAuth
+	@RequestMapping("/update_artical")
+	public @ResponseBody ApiRet<Void> updateArtical(@RequestBody Artical artical) throws ArticalNotFoundException {
+		if (null == artical || artical.getArtId() == null) {
+			throw new IllegalArgumentException();
+		}
+
+		if (StringUtils.isEmpty(artical.getArtTitle()) && StringUtils.isEmpty(artical.getArtImgUrl())
+				&& StringUtils.isEmpty(artical.getArtTags()) && StringUtils.isEmpty(artical.getArtContent())) {
+			throw new IllegalArgumentException();
+		}
+
+		articalService.updateArtical(artical);
+
+		return ApiRet.ok();
 	}
 
 	/**

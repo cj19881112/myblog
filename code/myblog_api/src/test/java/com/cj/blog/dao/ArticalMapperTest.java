@@ -32,12 +32,6 @@ public class ArticalMapperTest {
 	public void testGetArtical_returnAll() throws ParseException {
 		List<Artical> articals = mapper.getArticals(0, -1, null, null);
 		assertThat(articals.size()).isEqualTo(3);
-		assertThat(articals.get(0)).isEqualToComparingFieldByField(new Artical(4, "world", "/abc", "hello",
-				"hello world", 1, "nice,job", sdf.parse("2018-01-01 00:00:02"), "0"));
-		assertThat(articals.get(1)).isEqualToComparingFieldByField(new Artical(3, "world", "/abc", "hello",
-				"hello world", 1, "hi", sdf.parse("2018-01-01 00:00:01"), "0"));
-		assertThat(articals.get(2)).isEqualToComparingFieldByField(new Artical(2, "hello", "/abc", "hello",
-				"hello world", 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
 	}
 
 	@Test
@@ -113,5 +107,37 @@ public class ArticalMapperTest {
 		assertThat(affectedRows).isEqualTo(1);
 		Artical articalInDb = mapper.getArticalDetail(artical.getArtId());
 		assertThat(artical).isEqualToComparingFieldByField(articalInDb);
+	}
+
+	/**
+	 * 测试编辑文章
+	 */
+	@Test
+	public void testUpdateArtical_success() {
+		int articalId = 4;
+		Artical artical = new Artical(articalId, "h", "/a", "brief001", "content001", null, "hi", null, null);
+		Artical articalInDb = mapper.getArticalDetail(articalId);
+		articalInDb.setArtTitle(artical.getArtTitle());
+		articalInDb.setArtImgUrl(artical.getArtImgUrl());
+		articalInDb.setArtBrief(artical.getArtBrief());
+		articalInDb.setArtContent(artical.getArtContent());
+		articalInDb.setArtTags(artical.getArtTags());
+
+		Integer affectedRows = mapper.updateArtical(artical);
+
+		assertThat(affectedRows).isEqualTo(1);
+
+		Artical articalExpected = mapper.getArticalDetail(articalId);
+		assertThat(articalExpected).isEqualToComparingFieldByField(articalInDb);
+	}
+
+	/**
+	 * 测试编辑未找到记录
+	 */
+	@Test
+	public void testUpdateArtical_notFound() {
+		Artical artical = new Artical(11, "h", "/a", "brief001", "content001", null, "hi", null, null);
+		Integer affectedRows = mapper.updateArtical(artical);
+		assertThat(affectedRows).isEqualTo(0);
 	}
 }

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -30,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.cj.blog.model.Artical;
 import com.cj.blog.service.ArticalService;
 import com.cj.util.ApiRet;
+import com.cj.util.excep.ArticalNotFoundException;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -273,5 +275,95 @@ public class ArticalControllerTest {
 	public void testCreateArtical_errorEmptyContent() throws Exception {
 		testCreateArtical_invalidArgument(
 				new Artical(null, "title", "/url", "", "", 1, "hi", sdf.parse("2018-01-01 00:00:00"), "0"));
+	}
+
+	/**
+	 * 编辑文章成功
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateArtical_success() throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
+		Artical artical = new Artical(4, "world", "/abc", null, "hello world", null, "nice,job", null, null);
+		mvc.perform(post("/api/artical/update_artical").contentType(MediaType.APPLICATION_JSON)
+				.content(g.toJson(artical)).session(session)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())));
+
+		ArgumentCaptor<Artical> articalCaptor = ArgumentCaptor.forClass(Artical.class);
+		verify(service).updateArtical(articalCaptor.capture());
+
+		assertThat(articalCaptor.getValue()).isEqualToIgnoringNullFields(artical);
+	}
+
+	/**
+	 * 编辑文章成功
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateArtical_notFound() throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
+		doThrow(ArticalNotFoundException.class).when(service).updateArtical(any());
+
+		Artical artical = new Artical(4, "world", "/abc", null, "hello world", null, "nice,job", null, null);
+
+		mvc.perform(post("/api/artical/update_artical").contentType(MediaType.APPLICATION_JSON)
+				.content(g.toJson(artical)).session(session)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.NOT_FOUND.getCode())));
+	}
+
+	private void testUpdateArtical_illegalArgument(Artical artical) throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
+		mvc.perform(post("/api/artical/update_artical").contentType(MediaType.APPLICATION_JSON)
+				.content(g.toJson(artical)).session(session)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ILLEGAL_ARGUMENT.getCode())));
+	}
+
+	/**
+	 * 编辑文章-未填写ID
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateArtical_notId() throws Exception {
+		testUpdateArtical_illegalArgument(
+				new Artical(null, "world", "/abc", null, "hello world", null, "nice,job", null, null));
+	}
+
+	/**
+	 * 编辑文章-所有字段都是null
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateArtical_allFieldNull() throws Exception {
+		testUpdateArtical_illegalArgument(new Artical(4, null, null, null, null, null, null, null, null));
+	}
+
+	/**
+	 * 编辑文章-所有字段都是空的字符
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateArtical_allFieldEmpty() throws Exception {
+		testUpdateArtical_illegalArgument(new Artical(4, null, null, null, null, null, null, null, null));
+	}
+
+	/**
+	 * 编辑文章-所有字段有些empty有些null
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testUpdateArtical_allSomeNullSomeEmpty() throws Exception {
+		testUpdateArtical_illegalArgument(new Artical(4, "", null, null, null, null, null, null, null));
 	}
 }

@@ -3,6 +3,7 @@ package com.cj.blog.service;
 import java.util.List;
 
 import com.cj.blog.model.Artical;
+import com.cj.util.excep.ArticalNotFoundException;
 
 public interface ArticalService {
 
@@ -54,9 +55,20 @@ public interface ArticalService {
 	 * 获取简短的正文内容F
 	 * 
 	 * @param content
+	 *            内容
 	 * @param briefLength
+	 *            简短内容的长度
 	 * @return
 	 */
 	public String getBrief(String content, int briefLength);
+
+	/**
+	 * 更新文章
+	 * 
+	 * @param artical
+	 *            文章
+	 * @throws ArticalNotFoundException
+	 */
+	public void updateArtical(Artical artical) throws ArticalNotFoundException;
 
 }

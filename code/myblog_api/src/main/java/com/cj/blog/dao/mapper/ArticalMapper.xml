@@ -49,6 +49,30 @@
 		]]>
 	</insert>
 
+	<update id="updateArtical" parameterType="com.cj.blog.model.Artical">
+		<![CDATA[
+		update t_artical 
+		]]>
+		<set>
+			<if test="a.artTitle != null and a.artTitle != ''">
+				art_title_ = #{a.artTitle},
+			</if>
+			<if test="a.artTitle != null and a.artTitle != ''">
+				art_img_url_ = #{a.artImgUrl},
+			</if>
+			<if test="a.artTitle != null and a.artTitle != ''">
+				art_brief_ = #{a.artBrief},
+			</if>
+			<if test="a.artTitle != null and a.artTitle != ''">
+				art_content_ = #{a.artContent},
+			</if>
+			<if test="a.artTitle != null and a.artTitle != ''">
+				art_tags_ = #{a.artTags}
+			</if>
+		</set>
+		where art_id_ = #{a.artId}
+	</update>
+
 	<delete id="removeArtical">
 		<![CDATA[
 		delete from t_artical WHERE t_artical.art_id_ = #{artId}

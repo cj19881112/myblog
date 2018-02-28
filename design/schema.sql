@@ -46,7 +46,7 @@ CREATE TABLE `t_artical` (
   `art_content_` text NOT NULL COMMENT '文章内容',
   `art_read_cnt_` int(11) NOT NULL DEFAULT '0' COMMENT '文章有几个人阅读',
   `art_tags_` varchar(255) NOT NULL COMMENT '文章的tag，用英文逗号拼接',
-  `art_created_at_` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '文章创建时间',
+  `art_created_at_` datetime NOT NULL COMMENT '文章创建时间',
   `art_is_del_` char(1) NOT NULL DEFAULT '0' COMMENT '是否删除(0-否 1-是)',
   PRIMARY KEY (`art_id_`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;

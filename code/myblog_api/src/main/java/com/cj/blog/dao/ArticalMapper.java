@@ -54,9 +54,21 @@ public interface ArticalMapper {
 	Integer saveArtical(@Param("a") Artical artical);
 
 	/**
+	 * 编辑文章
+	 * 
+	 * @param artical
+	 *            文章
+	 * @return 影响行数
+	 */
+	int updateArtical(@Param("a") Artical artical);
+
+	/**
 	 * 删除文章
-	 * @param artId 文章ID
+	 * 
+	 * @param artId
+	 *            文章ID
 	 * @return
 	 */
 	int removeArtical(@Param("artId") Integer artId);
+
 }

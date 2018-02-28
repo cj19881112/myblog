@@ -89,4 +89,24 @@ public class ArticalControllerTestIT {
 
 		mapper.removeArtical(ret.getBody().getData());
 	}
+
+	/**
+	 * 编辑文章-集成测试
+	 * 
+	 * @throws IllegalCaptchaModeException
+	 */
+	@Test
+	public void testUpdateArtical_returnOk() throws IllegalCaptchaModeException {
+		RestHelper restHelper = new RestHelper(rest);
+
+		// 先登录
+		SysConfigControllerIT.testLogin_returnSuccess(restHelper);
+
+		// 测试
+		Artical artical = new Artical(4, "world", "/abc", null, "hello world", null, "nice,job", null, null);
+		ResponseEntity<ApiRet<Void>> ret = restHelper.postForEntity("/api/artical/update_artical",
+				new Gson().toJson(artical), new ParameterizedTypeReference<ApiRet<Void>>() {
+				});
+		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
+	}
 }

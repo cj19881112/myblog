@@ -15,6 +15,7 @@ import com.cj.blog.model.EnumBoolean;
 import com.cj.blog.service.ArticalService;
 import com.cj.util.Constants;
 import com.cj.util.SqlUtil;
+import com.cj.util.excep.ArticalNotFoundException;
 
 @Service
 @Transactional
@@ -52,6 +53,22 @@ public class ArticalServiceImpl implements ArticalService {
 	}
 
 	@Override
+	public void updateArtical(Artical artical) throws ArticalNotFoundException {
+		Artical articalForUpdate = new Artical();
+		articalForUpdate.setArtId(artical.getArtId());
+		articalForUpdate.setArtTitle(artical.getArtTitle());
+		articalForUpdate.setArtImgUrl(artical.getArtImgUrl());
+		articalForUpdate.setArtBrief(getBrief(artical.getArtContent(), Constants.BRIEF_LENGTH));
+		articalForUpdate.setArtContent(artical.getArtContent());
+		articalForUpdate.setArtTags(artical.getArtTags());
+
+		int n = mapper.updateArtical(articalForUpdate);
+		if (n == 0) {
+			throw new ArticalNotFoundException();
+		}
+	}
+
+	@Override
 	public String getBrief(String content, int briefLength) {
 		if (StringUtils.isEmpty(content) || briefLength <= 0) {
 			return "";
@@ -63,4 +80,5 @@ public class ArticalServiceImpl implements ArticalService {
 
 		return content.substring(0, briefLength);
 	}
+
 }
