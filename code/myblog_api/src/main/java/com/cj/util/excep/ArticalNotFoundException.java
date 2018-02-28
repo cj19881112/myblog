@@ -1,4 +1,4 @@
-package com.cj.util;
+package com.cj.util.excep;
 
 /**
  * 未找到对应的文章

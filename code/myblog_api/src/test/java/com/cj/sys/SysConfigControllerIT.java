@@ -23,11 +23,11 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.cj.RestHelper;
-import com.cj.conf.MyConfiguration;
 import com.cj.util.ApiRet;
 import com.cj.util.CaptchaUtil;
-import com.cj.util.IllegalCaptchaModeException;
+import com.cj.util.Constants;
 import com.cj.util.PasswordUtil;
+import com.cj.util.excep.IllegalCaptchaModeException;
 import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
@@ -44,13 +44,17 @@ public class SysConfigControllerIT {
 	 */
 	@Test
 	public void testLogin_returnSuccess() throws IllegalCaptchaModeException {
+		testLogin_returnSuccess(new RestHelper(rest));
+	}
+
+	public static void testLogin_returnSuccess(RestHelper restHelper) throws IllegalCaptchaModeException {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.FIX);
 
-		String password = PasswordUtil.encrypt(MyConfiguration.PASSWORD, MyConfiguration.CAPTCHA);
+		String password = PasswordUtil.encrypt(Constants.PASSWORD, Constants.CAPTCHA);
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("password", password);
-		ResponseEntity<ApiRet<Void>> ret = new RestHelper(rest).postForEntity("/api/sys/login", params,
+		ResponseEntity<ApiRet<Void>> ret = restHelper.postForEntity("/api/sys/login", params,
 				new ParameterizedTypeReference<ApiRet<Void>>() {
 				});
 		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());

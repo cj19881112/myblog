@@ -19,7 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import com.cj.RestHelper;
 import com.cj.blog.dao.ArticalMapper;
 import com.cj.blog.model.Artical;
+import com.cj.sys.SysConfigControllerIT;
 import com.cj.util.ApiRet;
+import com.cj.util.excep.IllegalCaptchaModeException;
 import com.google.gson.Gson;
 
 @RunWith(SpringRunner.class)
@@ -68,11 +70,18 @@ public class ArticalControllerTestIT {
 	 * 创建文章-集成测试
 	 * 
 	 * @throws ParseException
+	 * @throws IllegalCaptchaModeException
 	 */
 	@Test
-	public void testCreateArtical_returnId() throws ParseException {
+	public void testCreateArtical_returnId() throws ParseException, IllegalCaptchaModeException {
+		RestHelper restHelper = new RestHelper(rest);
+
+		// 先登录
+		SysConfigControllerIT.testLogin_returnSuccess(restHelper);
+
+		// 测试
 		Artical artical = new Artical(null, "hello", "/abc", "hello", "hello world", null, "hi", null, null);
-		ResponseEntity<ApiRet<Integer>> ret = new RestHelper(rest).postForEntity("/api/artical/create_artical",
+		ResponseEntity<ApiRet<Integer>> ret = restHelper.postForEntity("/api/artical/create_artical",
 				new Gson().toJson(artical), new ParameterizedTypeReference<ApiRet<Integer>>() {
 				});
 		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());

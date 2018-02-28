@@ -4,8 +4,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.util.StringUtils;
 
-import com.cj.conf.MyConfiguration;
 import com.cj.util.excep.CaptchaNotGenerateException;
+import com.cj.util.excep.IllegalCaptchaModeException;
 import com.google.code.kaptcha.Constants;
 
 public abstract class CaptchaUtil {
@@ -26,9 +26,12 @@ public abstract class CaptchaUtil {
 
 	/**
 	 * 获取session中的验证码，如果当前是固定模式，返回固定的验证码，否则返回session中的验证码
-	 * @param session 用户会话
+	 * 
+	 * @param session
+	 *            用户会话
 	 * @return 如果session不为空，返回session中的验证码
-	 * @throws CaptchaNotGenerateException session中不存在验证码
+	 * @throws CaptchaNotGenerateException
+	 *             session中不存在验证码
 	 */
 	public static String getCaptcha(HttpSession session) throws CaptchaNotGenerateException {
 		if (null == session) {
@@ -41,7 +44,7 @@ public abstract class CaptchaUtil {
 
 		String captcha = null;
 		if (captchaMode.equalsIgnoreCase(FIX)) {
-			captcha = MyConfiguration.CAPTCHA;
+			captcha = com.cj.util.Constants.CAPTCHA;
 		} else {
 			captcha = (String) session.getAttribute(Constants.KAPTCHA_SESSION_KEY);
 		}
@@ -55,8 +58,11 @@ public abstract class CaptchaUtil {
 
 	/**
 	 * 设置系统当前的验证码生成模式
-	 * @param captchaMode 验证码生成模式
-	 * @throws IllegalCaptchaModeException 设置的模式不正确
+	 * 
+	 * @param captchaMode
+	 *            验证码生成模式
+	 * @throws IllegalCaptchaModeException
+	 *             设置的模式不正确
 	 */
 	public static void setCaptchaMode(String captchaMode) throws IllegalCaptchaModeException {
 		if (captchaMode.equals(FIX) || captchaMode.equals(RANDOM)) {

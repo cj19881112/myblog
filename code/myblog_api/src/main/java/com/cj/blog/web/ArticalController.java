@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cj.blog.model.Artical;
 import com.cj.blog.service.ArticalService;
+import com.cj.sys.model.NeedAuth;
 import com.cj.util.ApiRet;
-import com.cj.util.ArticalNotFoundException;
 import com.cj.util.ApiRet.ErrCode;
+import com.cj.util.excep.ArticalNotFoundException;
 
 @Controller
 @RequestMapping("/api/artical")
@@ -82,6 +83,7 @@ public class ArticalController {
 	 *            文章内容
 	 * @return 生成的文章的ID
 	 */
+	@NeedAuth
 	@RequestMapping("/create_artical")
 	public @ResponseBody ApiRet<Integer> createArtical(@RequestBody Artical artical) {
 		if (StringUtils.isEmpty(artical.getArtTitle()) || StringUtils.isEmpty(artical.getArtImgUrl())

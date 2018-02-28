@@ -13,7 +13,7 @@ import com.cj.blog.dao.ArticalMapper;
 import com.cj.blog.model.Artical;
 import com.cj.blog.model.EnumBoolean;
 import com.cj.blog.service.ArticalService;
-import com.cj.conf.MyConfiguration;
+import com.cj.util.Constants;
 import com.cj.util.SqlUtil;
 
 @Service
@@ -43,7 +43,7 @@ public class ArticalServiceImpl implements ArticalService {
 
 	@Override
 	public Integer createArtical(Artical artical) {
-		artical.setArtBrief(getBrief(artical.getArtContent(), MyConfiguration.BRIEF_LENGTH));
+		artical.setArtBrief(getBrief(artical.getArtContent(), Constants.BRIEF_LENGTH));
 		artical.setArtCreatedAt(new Date());
 		artical.setArtIsDel(EnumBoolean.FALSE.getCode());
 		artical.setArtReadCnt(0);

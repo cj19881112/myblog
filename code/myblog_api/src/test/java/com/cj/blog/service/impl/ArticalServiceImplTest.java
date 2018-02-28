@@ -23,7 +23,7 @@ import org.mockito.stubbing.Answer;
 
 import com.cj.blog.dao.ArticalMapper;
 import com.cj.blog.model.Artical;
-import com.cj.conf.MyConfiguration;
+import com.cj.util.Constants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArticalServiceImplTest {
@@ -206,8 +206,8 @@ public class ArticalServiceImplTest {
 		ArgumentCaptor<Artical> articalCaptor = ArgumentCaptor.forClass(Artical.class);
 		verify(mockMapper).saveArtical(articalCaptor.capture());
 		assertThat(id).isEqualTo(mockId);
-		Artical articalExpected = new Artical(null, "hello", "/abc",
-				service.getBrief(content, MyConfiguration.BRIEF_LENGTH), content, 0, "hi", null, "0");
+		Artical articalExpected = new Artical(null, "hello", "/abc", service.getBrief(content, Constants.BRIEF_LENGTH),
+				content, 0, "hi", null, "0");
 		assertThat(articalCaptor.getValue()).isEqualToIgnoringNullFields(articalExpected);
 	}
 

@@ -20,7 +20,6 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.cj.conf.MyConfiguration;
 import com.cj.sys.service.SysConfigService;
 import com.cj.util.ApiRet;
 import com.cj.util.CaptchaUtil;
@@ -52,21 +51,21 @@ public class SysConfigControllerTest {
 	public void testLogin_success() throws Exception {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
 
-		String captcha = "1111", password = MyConfiguration.PASSWORD;
+		String captcha = "1111", password = com.cj.util.Constants.PASSWORD;
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, captcha);
 
 		this.mvc.perform(
 				post("/api/sys/login").param("password", PasswordUtil.encrypt(password, captcha)).session(session))
 				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())));
 
-		assertThat(session.getAttribute(MyConfiguration.SESSION_KEY)).isNotNull();
+		assertThat(session.getAttribute(com.cj.util.Constants.SESSION_KEY)).isNotNull();
 	}
 
 	@Test
 	public void testLogin_errorCapcha() throws Exception {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
 
-		String captcha = "1111", password = MyConfiguration.PASSWORD;
+		String captcha = "1111", password = com.cj.util.Constants.PASSWORD;
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, "1112");
 
 		this.mvc.perform(

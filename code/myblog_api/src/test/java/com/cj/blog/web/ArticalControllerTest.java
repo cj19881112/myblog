@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -135,19 +136,35 @@ public class ArticalControllerTest {
 	 */
 	@Test
 	public void testCreateArtical_returnId() throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
 		Artical artical = new Artical(null, "hello", "/abc", null, "hello world", null, "hi", null, null);
 		Integer id = 1;
 		when(service.createArtical(any())).thenReturn(id);
 
-		mvc.perform(
-				post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON).content(g.toJson(artical)))
-				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())))
-				.andExpect(jsonPath("$.data", is(id)));
+		mvc.perform(post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON)
+				.content(g.toJson(artical)).session(session)).andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode()))).andExpect(jsonPath("$.data", is(id)));
 
 		ArgumentCaptor<Artical> articalCaptor = ArgumentCaptor.forClass(Artical.class);
 		verify(service).createArtical(articalCaptor.capture());
 
 		assertThat(articalCaptor.getValue()).isEqualToIgnoringNullFields(artical);
+	}
+
+	/**
+	 * 创建文章-未登录
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateArtical_noLogin() throws Exception {
+		Artical artical = new Artical(null, "hello", "/abc", null, "hello world", null, "hi", null, null);
+
+		mvc.perform(
+				post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON).content(g.toJson(artical)))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.NOT_LOGIN.getCode())));
 	}
 
 	/**
@@ -159,13 +176,14 @@ public class ArticalControllerTest {
 	 * @throws Exception
 	 */
 	private void testCreateArtical_invalidArgument(Artical artical) throws ParseException, Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
 
 		Integer id = 1;
 		when(service.createArtical(any())).thenReturn(id);
 
-		mvc.perform(
-				post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON).content(g.toJson(artical)))
-				.andExpect(status().isOk())
+		mvc.perform(post("/api/artical/create_artical").contentType(MediaType.APPLICATION_JSON)
+				.content(g.toJson(artical)).session(session)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ILLEGAL_ARGUMENT.getCode())));
 	}
 

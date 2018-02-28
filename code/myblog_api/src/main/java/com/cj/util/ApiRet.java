@@ -120,9 +120,12 @@ public class ApiRet<T> {
 	}
 
 	public enum ErrCode {
-		SUCC("ok", "成功"), ERR_PASSWORD("perm.error_password", "错误的密码或者验证码"), CAPTCHA_NOT_GENERATE(
-				"perm.invalid_captcha",
-				"验证码未生成"), ILLEGAL_ARGUMENT("sys.invalid_params", "参数错误"), NOT_FOUND("sys.not_found", "未找到请求的数据");
+		SUCC("ok", "成功"),
+		NOT_LOGIN("perm.not_login", "您还未登录"),
+		ERR_PASSWORD("perm.error_password", "错误的密码或者验证码"),
+		CAPTCHA_NOT_GENERATE("perm.invalid_captcha", "验证码未生成"),
+		ILLEGAL_ARGUMENT("sys.invalid_params", "参数错误"),
+		NOT_FOUND("sys.not_found", "未找到请求的数据");
 
 		private String code;
 		private String msg;

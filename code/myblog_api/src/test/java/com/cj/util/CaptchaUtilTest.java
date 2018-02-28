@@ -7,8 +7,8 @@ import javax.servlet.http.HttpSession;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpSession;
 
-import com.cj.conf.MyConfiguration;
 import com.cj.util.excep.CaptchaNotGenerateException;
+import com.cj.util.excep.IllegalCaptchaModeException;
 import com.google.code.kaptcha.Constants;
 
 public class CaptchaUtilTest {
@@ -23,13 +23,13 @@ public class CaptchaUtilTest {
 	public void testGetCaptcha_returnFix() throws CaptchaNotGenerateException, IllegalCaptchaModeException {
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.FIX);
 		String capcha = CaptchaUtil.getCaptcha(new MockHttpSession());
-		assertThat(capcha).isEqualTo(MyConfiguration.CAPTCHA);
+		assertThat(capcha).isEqualTo(com.cj.util.Constants.CAPTCHA);
 
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.FIX);
 		HttpSession session = new MockHttpSession();
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, "9712");
 		capcha = CaptchaUtil.getCaptcha(session);
-		assertThat(capcha).isEqualTo(MyConfiguration.CAPTCHA);
+		assertThat(capcha).isEqualTo(com.cj.util.Constants.CAPTCHA);
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class CaptchaUtilTest {
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute(Constants.KAPTCHA_SESSION_KEY, captcha);
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.FIX);
-		assertThat(CaptchaUtil.getCaptcha(session)).isEqualTo(MyConfiguration.CAPTCHA);
+		assertThat(CaptchaUtil.getCaptcha(session)).isEqualTo(com.cj.util.Constants.CAPTCHA);
 
 		CaptchaUtil.setCaptchaMode(CaptchaUtil.RANDOM);
 		assertThat(CaptchaUtil.getCaptcha(session)).isEqualTo(captcha);

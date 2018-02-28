@@ -3,39 +3,19 @@ package com.cj.conf;
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletException;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import com.cj.util.CaptchaUtil;
-import com.cj.util.IllegalCaptchaModeException;
+import com.cj.util.excep.IllegalCaptchaModeException;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 
 @Configuration
-@MapperScan("com.cj.*.dao")
-public class MyConfiguration {
-	/**
-	 * 默认密码
-	 */
-	public static final String PASSWORD = "hexijiehaha";
-
-	/**
-	 * 如果系统配置成不动态生成验证码，固定返回
-	 */
-	public static final String CAPTCHA = "1234";
-
-	/**
-	 * 登陆后，session中用户登录的凭证
-	 */
-	public static final String SESSION_KEY = "myblog_session_key";
-
-	/**
-	 * 文章的摘要的长度
-	 */
-	@Value("${artical.birefLength:20}")
-	public static int BRIEF_LENGTH = 32;
+public class MyConfiguration extends WebMvcConfigurerAdapter {
 
 	/**
 	 * 验证码生成模式: fix-固定 random-随机
@@ -127,5 +107,14 @@ public class MyConfiguration {
 	@PostConstruct
 	public void initCaptchaMode() throws IllegalCaptchaModeException {
 		CaptchaUtil.setCaptchaMode(mode);
+	}
+
+	/**
+	 * 注册所有的拦截器，包括： 登录拦截器
+	 */
+	@Override
+	public void addInterceptors(InterceptorRegistry registry) {
+		registry.addInterceptor(new LoginIntercepter()).addPathPatterns("/**");
+		super.addInterceptors(registry);
 	}
 }
