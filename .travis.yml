@@ -5,5 +5,11 @@ jdk:
  
 env:
   - TEST_DIR=code/myblog_api
+  
+services:
+  - mysql
+
+before_install:
+  - mysql -e 'CREATE DATABASE myblog_test;'
 
 script: cd $TEST_DIR && mvn install && mvn test
