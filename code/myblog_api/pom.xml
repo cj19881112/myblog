@@ -76,20 +76,37 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-
 		<!-- 下面的配置用于在执行mvn命令的时候，源代码目录下的xml文件会拷贝 -->
 		<resources>
 			<resource>
+				<directory>src/main/resources</directory>
+				<excludes>
+					<exclude>**/*.properties</exclude>
+					<exclude>**/*.xml</exclude>
+				</excludes>
+				<filtering>false</filtering>
+			</resource>
+			<resource>
 				<directory>src/main/java</directory>
 				<includes>
+					<include>**/*.properties</include>
 					<include>**/*.xml</include>
 				</includes>
+				<filtering>false</filtering>
 			</resource>
 		</resources>
 		<testResources>
 			<testResource>
 				<directory>src/test/java</directory>
 				<includes>
+					<include>**/*.properties</include>
+					<include>**/*.xml</include>
+				</includes>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources</directory>
+				<includes>
+					<include>**/*.properties</include>
 					<include>**/*.xml</include>
 				</includes>
 			</testResource>
