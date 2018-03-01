@@ -247,6 +247,39 @@ public class ArticalServiceImplTest {
 		service.updateArtical(artical);
 	}
 
+	////////////////////
+	// 删除文章
+	////////////////////
+	/**
+	 * 测试编辑，修改对应字段
+	 * 
+	 * @throws ArticalNotFoundException
+	 */
+	@Test
+	public void testRemoveArtical_success() throws ArticalNotFoundException {
+		when(mockMapper.removeArtical(any())).thenReturn(1);
+
+		int id = 1;
+		service.removeArtical(id);
+
+		ArgumentCaptor<Integer> artIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(mockMapper).removeArtical(artIdCaptor.capture());
+
+		assertThat(artIdCaptor.getValue()).isEqualTo(id);
+	}
+
+	/**
+	 * 测试编辑，修改对应字段
+	 * 
+	 * @throws ArticalNotFoundException
+	 */
+	@Test(expected = ArticalNotFoundException.class)
+	public void testRemoveArtical_notFound() throws ArticalNotFoundException {
+		when(mockMapper.removeArtical(any())).thenReturn(0);
+
+		service.removeArtical(1);
+	}
+
 	/**
 	 * 测试根据文章内容获取简短描述
 	 */

@@ -81,4 +81,12 @@ public class ArticalServiceImpl implements ArticalService {
 		return content.substring(0, briefLength);
 	}
 
+	@Override
+	public void removeArtical(int artId) throws ArticalNotFoundException {
+		int affectedRow = mapper.removeArtical(artId);
+		if (affectedRow != 1) {
+			throw new ArticalNotFoundException();
+		}
+	}
+
 }

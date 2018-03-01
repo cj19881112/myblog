@@ -299,7 +299,7 @@ public class ArticalControllerTest {
 	}
 
 	/**
-	 * 编辑文章成功
+	 * 编辑文章未找到文章
 	 * 
 	 * @throws Exception
 	 */
@@ -365,5 +365,73 @@ public class ArticalControllerTest {
 	@Test
 	public void testUpdateArtical_allSomeNullSomeEmpty() throws Exception {
 		testUpdateArtical_illegalArgument(new Artical(4, "", null, null, null, null, null, null, null));
+	}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	// 删除文章
+	///////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * 编辑文章成功
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testRemoveArtical_success() throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
+		Integer id = 1;
+		mvc.perform(post("/api/artical/remove_artical").param("artId", id + "").session(session))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.SUCC.getCode())));
+
+		ArgumentCaptor<Integer> artIdCaptor = ArgumentCaptor.forClass(Integer.class);
+		verify(service).removeArtical(artIdCaptor.capture());
+
+		assertThat(artIdCaptor.getValue()).isEqualByComparingTo(id);
+	}
+
+	/**
+	 * 编辑文章未找到文章
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testRemoveArtical_notFound() throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
+		doThrow(ArticalNotFoundException.class).when(service).removeArtical(anyInt());
+
+		mvc.perform(post("/api/artical/remove_artical").param("artId", 1 + "").session(session))
+				.andExpect(status().isOk()).andExpect(jsonPath("$.code", is(ApiRet.ErrCode.NOT_FOUND.getCode())));
+	}
+
+	private void testRemoveArtical_illegalArgument(String artId) throws Exception {
+		MockHttpSession session = new MockHttpSession();
+		session.setAttribute(com.cj.util.Constants.SESSION_KEY, com.cj.util.Constants.SESSION_KEY);
+
+		mvc.perform(post("/api/artical/remove_artical").param("artId", artId).session(session))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.code", is(ApiRet.ErrCode.ILLEGAL_ARGUMENT.getCode())));
+	}
+
+	/**
+	 * 编辑文章-未填写ID
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testRemoveArtical_notId() throws Exception {
+		testRemoveArtical_illegalArgument(null);
+	}
+
+	/**
+	 * 编辑文章-ID为空
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testRemoveArtical_emptyId() throws Exception {
+		testRemoveArtical_illegalArgument("");
 	}
 }

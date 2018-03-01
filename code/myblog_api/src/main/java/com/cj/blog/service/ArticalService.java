@@ -70,5 +70,11 @@ public interface ArticalService {
 	 * @throws ArticalNotFoundException
 	 */
 	public void updateArtical(Artical artical) throws ArticalNotFoundException;
-
+	
+	/**
+	 * 删除文章
+	 * @param artId 文章ID
+	 * @throws ArticalNotFoundException
+	 */
+	public void removeArtical(int artId) throws ArticalNotFoundException;
 }

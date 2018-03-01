@@ -118,6 +118,16 @@ public class ArticalController {
 		return ApiRet.ok();
 	}
 
+	@NeedAuth
+	@RequestMapping("/remove_artical")
+	public @ResponseBody ApiRet<Void> removeArtical(Integer artId) throws ArticalNotFoundException {
+		if (null == artId) {
+			throw new IllegalArgumentException();
+		}
+		articalService.removeArtical(artId);
+		return ApiRet.ok();
+	}
+
 	/**
 	 * 处理未找到文章异常
 	 * 

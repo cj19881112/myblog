@@ -140,4 +140,25 @@ public class ArticalMapperTest {
 		Integer affectedRows = mapper.updateArtical(artical);
 		assertThat(affectedRows).isEqualTo(0);
 	}
+
+	////////////////////
+	// 测试删除文章
+	///////////////////
+	/**
+	 * 测试编辑文章
+	 */
+	@Test
+	public void testRemoveArtical_success() {
+		Integer affectedRows = mapper.removeArtical(4);
+		assertThat(affectedRows).isEqualTo(1);
+	}
+
+	/**
+	 * 测试编辑未找到记录
+	 */
+	@Test
+	public void testRemoveArtical_notFound() {
+		Integer affectedRows = mapper.removeArtical(11);
+		assertThat(affectedRows).isEqualTo(0);
+	}
 }

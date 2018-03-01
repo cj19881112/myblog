@@ -45,8 +45,6 @@ public class ArticalControllerTestIT {
 
 		assertThat(artical.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
 		assertThat(artical.getBody().getData().size()).isEqualTo(3);
-		assertThat(artical.getBody().getData().get(0)).isEqualToComparingFieldByField(new Artical(4, "world", "/abc",
-				"hello", "hello world", 1, "nice,job", sdf.parse("2018-01-01 00:00:02"), "0"));
 		assertThat(artical.getBody().getData().get(1)).isEqualToComparingFieldByField(new Artical(3, "world", "/abc",
 				"hello", "hello world", 1, "hi", sdf.parse("2018-01-01 00:00:01"), "0"));
 		assertThat(artical.getBody().getData().get(2)).isEqualToComparingFieldByField(new Artical(2, "hello", "/abc",
@@ -99,6 +97,10 @@ public class ArticalControllerTestIT {
 	public void testUpdateArtical_returnOk() throws IllegalCaptchaModeException {
 		RestHelper restHelper = new RestHelper(rest);
 
+		ResponseEntity<ApiRet<Artical>> originArtical = new RestHelper(rest).getForEntity(
+				"/api/artical/get_artical_detail?artId=4", new ParameterizedTypeReference<ApiRet<Artical>>() {
+				});
+
 		// 先登录
 		SysConfigControllerIT.testLogin_returnSuccess(restHelper);
 
@@ -108,5 +110,36 @@ public class ArticalControllerTestIT {
 				new Gson().toJson(artical), new ParameterizedTypeReference<ApiRet<Void>>() {
 				});
 		assertThat(ret.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
+
+		// 还原数据
+		restHelper.postForEntity("/api/artical/update_artical", new Gson().toJson(originArtical),
+				new ParameterizedTypeReference<ApiRet<Void>>() {
+				});
+	}
+
+	/**
+	 * 删除文章-集成测试
+	 * 
+	 * @throws IllegalCaptchaModeException
+	 */
+	@Test
+	public void testRemoveArtical_returnOk() throws IllegalCaptchaModeException {
+		RestHelper restHelper = new RestHelper(rest);
+
+		// 先登录
+		SysConfigControllerIT.testLogin_returnSuccess(restHelper);
+
+		// 创建数据
+		Artical artical = new Artical(null, "hello", "/abc", "hello", "hello world", null, "hi", null, null);
+		ResponseEntity<ApiRet<Integer>> ret = restHelper.postForEntity("/api/artical/create_artical",
+				new Gson().toJson(artical), new ParameterizedTypeReference<ApiRet<Integer>>() {
+				});
+
+		// 测试删除
+		ResponseEntity<ApiRet<Void>> delRet = restHelper.postForEntity(
+				"/api/artical/remove_artical?artId=" + ret.getBody().getData(),
+				new ParameterizedTypeReference<ApiRet<Void>>() {
+				});
+		assertThat(delRet.getBody().getCode()).isEqualTo(ApiRet.ErrCode.SUCC.getCode());
 	}
 }
